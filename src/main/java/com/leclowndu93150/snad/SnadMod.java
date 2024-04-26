@@ -49,6 +49,7 @@ public class SnadMod
     // Creates a new food item with the id "examplemod:example_id", nutrition 1 and saturation 2
 
     // Creates a creative tab with the id "examplemod:example_tab" for the example item, that is placed after the combat tab
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SNAD_TAB = CREATIVE_MODE_TABS.register("snad", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.snad")) //The language key for the title of your CreativeModeTab
             .withTabsBefore(CreativeModeTabs.COMBAT)
@@ -59,6 +60,9 @@ public class SnadMod
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
+
+
+
     public SnadMod(IEventBus modEventBus)
     {
         // Register the commonSetup method for modloading
@@ -71,18 +75,11 @@ public class SnadMod
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
 
-        // Register ourselves for server and other game events we are interested in.
-        // Note that this is necessary if and only if we want *this* class (SnadMod) to respond directly to events.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
-        NeoForge.EVENT_BUS.register(this);
-
-        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
-
     private void commonSetup(final FMLCommonSetupEvent event)
     {
         LOGGER.info("I think im doing things right");
     }
 
 }
+
