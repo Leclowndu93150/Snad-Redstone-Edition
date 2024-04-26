@@ -18,6 +18,7 @@ public class Lang extends LanguageProvider {
         protected void addTranslations () {
             add(SnadMod.SNAD_BLOCK.get(), "Snad");
             add(SnadMod.RED_SNAD_BLOCK.get(),"Red Snad");
+            add(SnadMod.SOUL_SNAD_BLOCK.get(),"Soul Snad");
             add("itemGroup.snad", "Snad: Redstone Edition");
 
         }

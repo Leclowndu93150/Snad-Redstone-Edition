@@ -49,6 +49,13 @@ public class SnadMod
     );
     public static final DeferredItem<BlockItem> RED_SNAD_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("red_snad", RED_SNAD_BLOCK);
 
+    public static final DeferredBlock<Block> SOUL_SNAD_BLOCK = BLOCKS.register("soul_snad", () -> new SoulSnadBlock(BlockBehaviour.Properties.of()
+            .destroyTime(0.7f)
+            .explosionResistance(0.7f)
+            .sound(SoundType.SOUL_SAND))
+    );
+    public static final DeferredItem<BlockItem> SOUL_SNAD_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("soul_snad", SOUL_SNAD_BLOCK);
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SNAD_TAB = CREATIVE_MODE_TABS.register("snad", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.snad")) //The language key for the title of your CreativeModeTab
             .withTabsBefore(CreativeModeTabs.COMBAT)
@@ -56,6 +63,7 @@ public class SnadMod
             .displayItems((parameters, output) -> {
                 output.accept(SNAD_BLOCK_ITEM.get());
                 output.accept(RED_SNAD_BLOCK_ITEM.get());
+                output.accept(SOUL_SNAD_BLOCK_ITEM.get());
             }).build());
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.

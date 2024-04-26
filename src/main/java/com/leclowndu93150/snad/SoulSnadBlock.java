@@ -14,9 +14,9 @@ import net.neoforged.neoforge.common.PlantType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SnadBlock extends FallingBlock {
+public class SoulSnadBlock extends FallingBlock {
 
-    public SnadBlock(Properties pProperties) {
+    public SoulSnadBlock(Properties pProperties) {
         super(pProperties);
     }
 
@@ -27,7 +27,7 @@ public class SnadBlock extends FallingBlock {
 
     @Override
     public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable) {
-        if (plantable.getPlantType(world,pos) == PlantType.BEACH) {
+        if (plantable.getPlantType(world,pos) == PlantType.NETHER) {
             return true;
         }
         return false;
