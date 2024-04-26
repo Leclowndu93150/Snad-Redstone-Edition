@@ -1,0 +1,13 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "snad:block/red_sand",
+    "up": "snad:block/red_sand",
+    "north": "snad:block/red_sand",
+    "east": "snad:block/red_sand",
+    "south": "snad:block/red_sand",
+    "west": "snad:block/red_sand",
+    "particle": "snad:block/red_sand"
+  },
+  "render_type": "solid"
+}

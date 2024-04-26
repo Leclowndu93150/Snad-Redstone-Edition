@@ -7,6 +7,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
@@ -33,14 +34,20 @@ public class SnadMod
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "examplemod" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    // Creates a new Block with the id "examplemod:example_block", combining the namespace and path
-    public static final DeferredBlock<Block> SNAD_BLOCK = BLOCKS.registerSimpleBlock("snad", BlockBehaviour.Properties.of().mapColor(MapColor.SAND));
-    // Creates a new BlockItem with the id "examplemod:example_block", combining the namespace and path
+    public static final DeferredBlock<Block> SNAD_BLOCK = BLOCKS.register("snad", () -> new SnadBlock(BlockBehaviour.Properties.of()
+            .destroyTime(0.7f)
+            .explosionResistance(0.7f)
+            .sound(SoundType.SAND))
+    );
+
     public static final DeferredItem<BlockItem> SNAD_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("snad", SNAD_BLOCK);
 
-    // Creates a new food item with the id "examplemod:example_id", nutrition 1 and saturation 2
-
-    // Creates a creative tab with the id "examplemod:example_tab" for the example item, that is placed after the combat tab
+    public static final DeferredBlock<Block> RED_SNAD_BLOCK = BLOCKS.register("red_snad", () -> new SnadBlock(BlockBehaviour.Properties.of()
+            .destroyTime(0.7f)
+            .explosionResistance(0.7f)
+            .sound(SoundType.SAND))
+    );
+    public static final DeferredItem<BlockItem> RED_SNAD_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("red_snad", RED_SNAD_BLOCK);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SNAD_TAB = CREATIVE_MODE_TABS.register("snad", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.snad")) //The language key for the title of your CreativeModeTab
@@ -48,6 +55,7 @@ public class SnadMod
             .icon(() -> SNAD_BLOCK_ITEM.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 output.accept(SNAD_BLOCK_ITEM.get());
+                output.accept(RED_SNAD_BLOCK_ITEM.get());
             }).build());
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
