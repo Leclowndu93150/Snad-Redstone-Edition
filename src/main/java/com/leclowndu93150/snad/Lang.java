@@ -4,12 +4,8 @@ import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class Lang extends LanguageProvider {
-    public Lang(PackOutput output) {
-        super(
-                output,
-                "snad",
-                "en_us"
-        );
+    public Lang(PackOutput output, String locale) {
+        super(output, SnadMod.MODID, locale);
     }
 
     @Override
