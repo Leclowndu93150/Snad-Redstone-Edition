@@ -10,7 +10,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 public final class  MyDataGenerator{
     @SubscribeEvent
-    public static void gatherData(final GatherDataEvent event) {
+    public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         event.getGenerator().addProvider(event.includeServer(), new Lang(generator.getPackOutput()));
     }
