@@ -1,16 +1,14 @@
-package com.leclowndu93150.snad;
+package com.leclowndu93150.snad.datagen;
 
+import com.leclowndu93150.snad.SnadMod;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
-public class Lang extends LanguageProvider {
-    public Lang(PackOutput output) {
+public class LangProvider extends LanguageProvider {
+    public LangProvider(PackOutput output) {
         super(
-                // Provided by the GatherDataEvent.
                 output,
-                // Your mod id.
                 "snad",
-                // The locale to use. You may use multiple language providers for different locales.
                 "en_us"
         );
     }

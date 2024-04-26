@@ -1,5 +1,7 @@
 package com.leclowndu93150.snad;
 
+import com.leclowndu93150.snad.blocks.SnadBlock;
+import com.leclowndu93150.snad.blocks.SoulSnadBlock;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -9,7 +11,6 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;

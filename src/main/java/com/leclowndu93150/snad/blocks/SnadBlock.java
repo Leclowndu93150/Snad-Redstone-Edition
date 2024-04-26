@@ -1,4 +1,4 @@
-package com.leclowndu93150.snad;
+package com.leclowndu93150.snad.blocks;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -14,9 +14,9 @@ import net.neoforged.neoforge.common.PlantType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SoulSnadBlock extends FallingBlock {
+public class SnadBlock extends FallingBlock {
 
-    public SoulSnadBlock(Properties pProperties) {
+    public SnadBlock(Properties pProperties) {
         super(pProperties);
     }
 
@@ -27,7 +27,7 @@ public class SoulSnadBlock extends FallingBlock {
 
     @Override
     public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable) {
-        if (plantable.getPlantType(world,pos) == PlantType.NETHER) {
+        if (plantable.getPlantType(world,pos) == PlantType.BEACH) {
             return true;
         }
         return false;
@@ -55,7 +55,7 @@ public class SoulSnadBlock extends FallingBlock {
 
                     if (nextBlock.getClass() == blockAbove.getClass()) {
                         for (int growthAttempts = 0; growthAttempts < 8; growthAttempts++) {
-                            nextBlock.randomTick(pLevel.getBlockState(pPos.above(height)), pLevel, pPos.above(height), pRandom);
+                            pLevel.getBlockState(pPos.above(height)).randomTick(pLevel, pPos.above(height), pRandom);
                         }
                         height++;
                     } else {
