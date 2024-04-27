@@ -1,6 +1,5 @@
 package com.leclowndu93150.snad;
 
-import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
@@ -9,10 +8,11 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.item.CreativeModeTab;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(SnadMod.MODID)
@@ -55,31 +55,26 @@ public class SnadMod
             .title(Component.translatable("itemGroup.snad")) //The language key for the title of your CreativeModeTab
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon(() -> new ItemStack(SNAD_BLOCK_ITEM.get()))
-            .displayItems((parameters, output) -> {
+            .displayItems((params, output) -> {
                 output.accept(SNAD_BLOCK_ITEM.get());
                 output.accept(RED_SNAD_BLOCK_ITEM.get());
                 output.accept(SOUL_SNAD_BLOCK_ITEM.get());
             }).build());
+
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
 
 
 
-    public SnadMod(IEventBus modEventBus)
+    public SnadMod()
     {
-        // Register the commonSetup method for modloading
-
-        // Register the Deferred Register to the mod event bus so blocks get registered
-        BLOCKS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so items get registered
-        ITEMS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so tabs get registered
-        CREATIVE_MODE_TABS.register(modEventBus);
-
-
-
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        BLOCKS.register(eventBus);
+        ITEMS.register(eventBus);
+        CREATIVE_MODE_TABS.register(eventBus);
     }
+
 
 }
 
