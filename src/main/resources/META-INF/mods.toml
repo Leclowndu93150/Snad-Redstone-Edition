@@ -1,32 +1,23 @@
+
 modLoader="javafml" #mandatory
-loaderVersion="${loader_version_range}" #mandatory
-license="${mod_license}"
-
-[[mods]] #mandatory
-
-modId="${mod_id}" #mandatory
-
-version="${mod_version}"
-displayName="${mod_name}"
+loaderVersion="[47,)"
 logoFile="logo.png"
-
-
+license="All Rights Reserved"
+[[mods]] #mandatory
+modId="${mod_id}" #mandatory
+version="${mod_version}" #mandatory
+displayName="${mod_name}" #mandatory
 authors="${mod_authors}" #optional
-
 description='''${mod_description}'''
-
-[[dependencies.${mod_id}]] #optional
-    modId="forge" #mandatory
-    mandatory=true #mandatory
-    versionRange="${neo_version_range}" #mandatory
+[[dependencies.snad]] #optional
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
     ordering="NONE"
     side="BOTH"
-
-# Here's another dependency
-[[dependencies.${mod_id}]]
+[[dependencies.snad]]
     modId="minecraft"
     mandatory=true
-    # This version range declares a minimum of the current minecraft version up to but not including the next major version
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"

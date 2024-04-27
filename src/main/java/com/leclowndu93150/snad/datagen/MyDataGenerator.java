@@ -1,4 +1,4 @@
-package com.leclowndu93150.snad;
+package com.leclowndu93150.snad.datagen;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

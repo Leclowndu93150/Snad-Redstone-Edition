@@ -1,6 +1,8 @@
 {
   "pack": {
-    "pack_format": 26,
-    "description": "Snad Mod Ressources"
+    "description": {
+      "text": "Snad resources"
+    },
+    "pack_format": 15
   }
 }

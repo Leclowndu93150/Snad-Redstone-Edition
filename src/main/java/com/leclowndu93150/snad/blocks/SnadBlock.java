@@ -1,12 +1,12 @@
-package com.leclowndu93150.snad;
+package com.leclowndu93150.snad.blocks;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.IPlantable;
@@ -20,12 +20,10 @@ public class SnadBlock extends FallingBlock {
         super(pProperties);
     }
 
-   /*
-    @Override
-    protected MapCodec<? extends FallingBlock> codec() {
-        return null;
+    public SnadBlock() {
+        super(Block.Properties.copy(Blocks.SAND));
     }
-     */
+
 
     @Override
     public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable) {
