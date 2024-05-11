@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.PlantType;
 import org.jetbrains.annotations.NotNull;
@@ -46,26 +47,31 @@ public class SnadBlock extends FallingBlock {
     @Override
     public void tick(@NotNull BlockState pState, ServerLevel pLevel, BlockPos pPos, @NotNull RandomSource pRandom) {
         final Block blockAbove = pLevel.getBlockState(pPos.above()).getBlock();
-        if (blockAbove instanceof IPlantable && pLevel.hasSignal(pPos,Direction.NORTH)) {
-            boolean isSameBlockType = true;
-            int height = 1;
-            while (isSameBlockType) {
-                if (pPos.above(height).getY() < pLevel.getMaxBuildHeight()) {
-                    final Block nextBlock = pLevel.getBlockState(pPos.above(height)).getBlock();
+        for(Direction direction : Direction.values()) {
+            BlockPos offsetPos = pPos.relative(direction);
+            BlockState blockState = pLevel.getBlockState(offsetPos);
+            if (blockAbove instanceof IPlantable && (blockState.hasProperty(BlockStateProperties.POWER)) && (blockState.getValue(BlockStateProperties.POWER) > 0)) {
+                boolean isSameBlockType = true;
+                int height = 1;
+                while (isSameBlockType) {
+                    if (pPos.above(height).getY() < pLevel.getMaxBuildHeight()) {
+                        final Block nextBlock = pLevel.getBlockState(pPos.above(height)).getBlock();
 
-                    if (nextBlock.getClass() == blockAbove.getClass()) {
-                        for (int growthAttempts = 0; growthAttempts < 8; growthAttempts++) {
-                            nextBlock.randomTick(pLevel.getBlockState(pPos.above(height)), pLevel, pPos.above(height), pRandom);
+                        if (nextBlock.getClass() == blockAbove.getClass()) {
+                            for (int growthAttempts = 0; growthAttempts < 8; growthAttempts++) {
+                                nextBlock.randomTick(pLevel.getBlockState(pPos.above(height)), pLevel, pPos.above(height), pRandom);
+                            }
+                            height++;
+                        } else {
+                            isSameBlockType = false;
                         }
-                        height++;
                     } else {
                         isSameBlockType = false;
                     }
-                } else {
-                    isSameBlockType = false;
-                }
 
+                }
             }
+
         }
     }
 }
