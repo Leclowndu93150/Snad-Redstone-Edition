@@ -50,7 +50,8 @@ public class SnadBlock extends FallingBlock {
         for(Direction direction : Direction.values()) {
             BlockPos offsetPos = pPos.relative(direction);
             BlockState blockState = pLevel.getBlockState(offsetPos);
-            if (blockAbove instanceof IPlantable && (blockState.hasProperty(BlockStateProperties.POWER)) && (blockState.getValue(BlockStateProperties.POWER) > 0)) {
+            if (blockAbove instanceof IPlantable && ((blockState.hasProperty(BlockStateProperties.POWER)) && (blockState.getValue(BlockStateProperties.POWER) != 0)) || pLevel.hasSignal(pPos,Direction.NORTH)) {
+                //System.out.println(blockState.getValue(BlockStateProperties.POWER));
                 boolean isSameBlockType = true;
                 int height = 1;
                 while (isSameBlockType) {
