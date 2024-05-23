@@ -29,6 +29,8 @@ public class SnadBlock extends FallingBlock {
     public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable) {
         if (plantable.getPlantType(world,pos) == PlantType.BEACH) {
             return true;
+        }else if (plantable.getPlantType(world,pos) == PlantType.DESERT) {
+            return true;
         }
         return false;
     }
