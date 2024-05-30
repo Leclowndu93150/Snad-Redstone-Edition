@@ -4,9 +4,11 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.IPlantable;
@@ -26,13 +28,20 @@ public class SnadBlock extends FallingBlock {
     }
 
     @Override
-    public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable) {
-        if (plantable.getPlantType(world,pos) == PlantType.BEACH ) {
+    public boolean canSustainPlant(BlockState state, BlockGetter level, BlockPos pos, Direction facing, IPlantable plantable) {
+        if (plantable.getPlantType(level, pos).equals(PlantType.DESERT)) {
             return true;
-        }else if(plantable.getPlantType(world,pos) == PlantType.DESERT ) {
-            return true;
+        } else if (plantable.getPlantType(level, pos).equals(PlantType.BEACH)) {
+            for (Direction direction : Direction.Plane.HORIZONTAL) {
+                boolean isWater = level.getFluidState(pos.relative(direction)).is(FluidTags.WATER);
+                boolean isFrostedIce = level.getBlockState(pos.relative(direction)).is(Blocks.FROSTED_ICE);
+                if (!isWater && !isFrostedIce) {
+                    continue;
+                }
+                return true;
+            }
         }
-        return false;
+        return super.canSustainPlant(state, level, pos, facing, plantable);
     }
 
     @Override
