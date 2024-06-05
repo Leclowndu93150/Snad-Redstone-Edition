@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.leclowndu93150.snad.mixins",
+  "refmap": "snad.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "MixinSplashManager",
+    "MixinSplashTextElement"
+  ]
+}

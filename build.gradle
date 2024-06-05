@@ -1,3 +1,18 @@
+buildscript {
+    repositories {
+        // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        mavenCentral()
+        maven {
+            url "https://cursemaven.com"
+        }
+
+    }
+    dependencies {
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
+}
+
 plugins {
     id 'java-library'
     id 'idea'
@@ -5,11 +20,16 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
+apply plugin: 'org.spongepowered.mixin'
+
 version = mod_version
 group = mod_group_id
 
 repositories {
     mavenLocal()
+    maven {
+        url "https://cursemaven.com"
+    }
 }
 
 base {
@@ -70,6 +90,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    implementation fg.deobf("curse.maven:fancymenu-367706:5340225")
 }
 
 tasks.withType(ProcessResources).configureEach {
@@ -89,6 +110,11 @@ tasks.withType(ProcessResources).configureEach {
     filesMatching(['META-INF/mods.toml']) {
         expand replaceProperties
     }
+}
+
+mixin {
+    add sourceSets.main, "snad.refmap.json"
+    config "snad.mixins.json"
 }
 
 
