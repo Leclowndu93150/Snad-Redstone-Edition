@@ -57,7 +57,7 @@ public class SnadBlock extends FallingBlock {
 
     public void grow(@NotNull BlockState pState, ServerLevel pLevel, BlockPos pPos, @NotNull RandomSource pRandom) {
         final Block blockAbove = pLevel.getBlockState(pPos.above()).getBlock();
-        if () {
+        if (blockAbove instanceof IPlantable && pLevel.hasSignal(pPos,Direction.NORTH)) {
             boolean isSameBlockType = true;
             int height = 1;
             while (isSameBlockType) {
