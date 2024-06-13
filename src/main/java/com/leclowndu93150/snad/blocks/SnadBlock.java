@@ -28,7 +28,7 @@ public class SnadBlock extends FallingBlock {
     }
 
     @Override
-    public boolean canSustainPlant(BlockState state, BlockGetter level, BlockPos pos, Direction facing, IPlantable plantable) {
+    public boolean canSustainPlant(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull Direction facing, IPlantable plantable) {
         if (plantable.getPlantType(level, pos).equals(PlantType.DESERT)) {
             return true;
         } else if (plantable.getPlantType(level, pos).equals(PlantType.BEACH)) {
@@ -45,12 +45,12 @@ public class SnadBlock extends FallingBlock {
     }
 
     @Override
-    public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos, @Nullable Direction direction) {
+    public boolean canConnectRedstone(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @Nullable Direction direction) {
         return super.canConnectRedstone(state, level, pos, direction);
     }
 
     @Override
-    public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
+    public void tick(@NotNull BlockState pState, @NotNull ServerLevel pLevel, @NotNull BlockPos pPos, @NotNull RandomSource pRandom) {
         this.grow(pState,pLevel,pPos,pRandom);
         boolean canRun;
     }
