@@ -7,12 +7,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.IPlantable;
-import net.neoforged.neoforge.common.PlantType;
+import net.neoforged.neoforge.common.util.TriState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,26 +24,31 @@ public class SnadBlock extends FallingBlock {
         return null;
     }
 
+    //List of Allowed Plants (Cactus and Sugar Cane)
+
     @Override
-    public boolean canSustainPlant(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull Direction facing, IPlantable plantable) {
-        if (plantable.getPlantType(level, pos).equals(PlantType.DESERT)) {
-            return true;
-        } else if (plantable.getPlantType(level, pos).equals(PlantType.BEACH)) {
+    public TriState canSustainPlant(BlockState state, BlockGetter level, BlockPos soilPosition, Direction facing, BlockState plant) {
+
+        if (plant.getBlock() instanceof CactusBlock) {
+            return TriState.TRUE;
+        }
+        if (plant.getBlock() instanceof SugarCaneBlock) {
             for (Direction direction : Direction.Plane.HORIZONTAL) {
-                boolean isWater = level.getFluidState(pos.relative(direction)).is(FluidTags.WATER);
-                boolean isFrostedIce = level.getBlockState(pos.relative(direction)).is(Blocks.FROSTED_ICE);
-                if (!isWater && !isFrostedIce) {
-                    continue;
+                BlockPos neighborPos = soilPosition.relative(direction);
+                boolean isWater = level.getFluidState(neighborPos).is(FluidTags.WATER);
+                boolean isFrostedIce = level.getBlockState(neighborPos).is(Blocks.FROSTED_ICE);
+                if (isWater || isFrostedIce) {
+                    return TriState.TRUE;
                 }
-                return true;
             }
         }
-        return super.canSustainPlant(state, level, pos, facing, plantable);
+
+        return super.canSustainPlant(state, level, soilPosition, facing, plant);
     }
 
     @Override
     public boolean canConnectRedstone(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @Nullable Direction direction) {
-        return super.canConnectRedstone(state, level, pos, direction);
+        return true;
     }
 
     @Override
@@ -57,7 +59,7 @@ public class SnadBlock extends FallingBlock {
 
     public void grow(@NotNull BlockState pState, ServerLevel pLevel, BlockPos pPos, @NotNull RandomSource pRandom) {
         final Block blockAbove = pLevel.getBlockState(pPos.above()).getBlock();
-        if (blockAbove instanceof IPlantable && pLevel.hasSignal(pPos,Direction.NORTH)) {
+        if ((blockAbove == Blocks.SUGAR_CANE || blockAbove == Blocks.CACTUS) && pLevel.hasSignal(pPos,Direction.NORTH)) {
             boolean isSameBlockType = true;
             int height = 1;
             while (isSameBlockType) {

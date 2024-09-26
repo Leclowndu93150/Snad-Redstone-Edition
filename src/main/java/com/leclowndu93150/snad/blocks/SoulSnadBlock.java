@@ -8,9 +8,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.IPlantable;
-import net.neoforged.neoforge.common.PlantType;
+import net.neoforged.neoforge.common.util.TriState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,17 +26,18 @@ public class SoulSnadBlock extends FallingBlock {
     }
 
     @Override
-    public boolean canSustainPlant(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull Direction facing, IPlantable plantable) {
-        if (plantable.getPlantType(world,pos) == PlantType.NETHER) {
-            return true;
+    public TriState canSustainPlant(BlockState state, BlockGetter level, BlockPos soilPosition, Direction facing, BlockState plant) {
+        if (plant.getBlock() instanceof NetherWartBlock) {
+            return TriState.TRUE;
         }
-        return false;
+        return TriState.FALSE;
     }
 
     @Override
     public boolean canConnectRedstone(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @Nullable Direction direction) {
-        return super.canConnectRedstone(state, level, pos, direction);
+        return true;
     }
+
 
     @Override
     public void randomTick(@NotNull BlockState pState, @NotNull ServerLevel pLevel, @NotNull BlockPos pPos, @NotNull RandomSource pRandom) {
@@ -46,7 +47,7 @@ public class SoulSnadBlock extends FallingBlock {
     @Override
     public void tick(@NotNull BlockState pState, ServerLevel pLevel, BlockPos pPos, @NotNull RandomSource pRandom) {
         final Block blockAbove = pLevel.getBlockState(pPos.above()).getBlock();
-        if (blockAbove instanceof IPlantable && pLevel.hasSignal(pPos,Direction.NORTH)) {
+        if (blockAbove instanceof NetherWartBlock && pLevel.hasSignal(pPos,Direction.NORTH)) {
             boolean isSameBlockType = true;
             int height = 1;
             while (isSameBlockType) {
