@@ -6,7 +6,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.TriState;
@@ -24,15 +26,31 @@ public class SnadBlock extends FallingBlock {
         return null;
     }
 
-    //List of Allowed Plants (Cactus and Sugar Cane)
+    @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+        if (!level.isClientSide) {
+            level.scheduleTick(pos, this, this.getDelayAfterPlace());
+        }
+        super.onPlace(state, level, pos, oldState, isMoving);
+    }
 
     @Override
-    public TriState canSustainPlant(BlockState state, BlockGetter level, BlockPos soilPosition, Direction facing, BlockState plant) {
-
-        if (plant.getBlock() instanceof CactusBlock) {
-            return TriState.TRUE;
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        if (isFree(level.getBlockState(pos.below()))) {
+            level.scheduleTick(pos, this, this.getDelayAfterPlace());
         }
-        if (plant.getBlock() instanceof SugarCaneBlock) {
+    }
+
+    @Override
+    public @NotNull TriState canSustainPlant(BlockState state, BlockGetter level, BlockPos soilPosition, Direction facing, BlockState plant) {
+        if (level.getBlockState(soilPosition.relative(Direction.DOWN)).isAir() || level.getBlockState(soilPosition.above()).is(Blocks.KELP_PLANT)) {
+            return TriState.FALSE;
+        }
+        if (plant.getBlock() instanceof CactusBlock || plant.getBlock() instanceof SugarCaneBlock || plant.getBlock() instanceof BambooSaplingBlock) {
+            if (plant.getBlock() instanceof BambooSaplingBlock || plant.getBlock() instanceof CactusBlock) {
+                return TriState.TRUE;
+            }
+
             for (Direction direction : Direction.Plane.HORIZONTAL) {
                 BlockPos neighborPos = soilPosition.relative(direction);
                 boolean isWater = level.getFluidState(neighborPos).is(FluidTags.WATER);
@@ -42,7 +60,6 @@ public class SnadBlock extends FallingBlock {
                 }
             }
         }
-
         return super.canSustainPlant(state, level, soilPosition, facing, plant);
     }
 
@@ -53,22 +70,31 @@ public class SnadBlock extends FallingBlock {
 
     @Override
     public void tick(@NotNull BlockState pState, @NotNull ServerLevel pLevel, @NotNull BlockPos pPos, @NotNull RandomSource pRandom) {
-        this.grow(pState,pLevel,pPos,pRandom);
-        boolean canRun;
+        if (isFree(pLevel.getBlockState(pPos.below())) && pPos.getY() >= pLevel.getMinBuildHeight()) {
+            FallingBlockEntity fallingBlockEntity = FallingBlockEntity.fall(pLevel, pPos, pState);
+            this.falling(fallingBlockEntity);
+        } else {
+            this.grow(pState, pLevel, pPos, pRandom);
+        }
     }
 
     public void grow(@NotNull BlockState pState, ServerLevel pLevel, BlockPos pPos, @NotNull RandomSource pRandom) {
-        final Block blockAbove = pLevel.getBlockState(pPos.above()).getBlock();
-        if ((blockAbove == Blocks.SUGAR_CANE || blockAbove == Blocks.CACTUS) && pLevel.hasSignal(pPos,Direction.NORTH)) {
+        Block blockAbove = pLevel.getBlockState(pPos.above()).getBlock();
+
+        if (pLevel.hasNeighborSignal(pPos)) {
             boolean isSameBlockType = true;
             int height = 1;
+
             while (isSameBlockType) {
-                if (pPos.above(height).getY() < pLevel.getMaxBuildHeight()) {
-                    final Block nextBlock = pLevel.getBlockState(pPos.above(height)).getBlock();
+                BlockPos currentPos = pPos.above(height);
+                if (currentPos.getY() < pLevel.getMaxBuildHeight()) {
+                    Block nextBlock = pLevel.getBlockState(currentPos).getBlock();
+
+                    int growthAttemptsLimit = (nextBlock instanceof KelpBlock) ? 1 : 6;
 
                     if (nextBlock.getClass() == blockAbove.getClass()) {
-                        for (int growthAttempts = 0; growthAttempts < 8; growthAttempts++) {
-                            pLevel.getBlockState(pPos.above(height)).randomTick(pLevel, pPos.above(height), pRandom);
+                        for (int growthAttempts = 0; growthAttempts < growthAttemptsLimit; growthAttempts++) {
+                            pLevel.getBlockState(currentPos).randomTick(pLevel, currentPos, pRandom);
                         }
                         height++;
                     } else {
@@ -77,9 +103,7 @@ public class SnadBlock extends FallingBlock {
                 } else {
                     isSameBlockType = false;
                 }
-
             }
         }
     }
 }
-

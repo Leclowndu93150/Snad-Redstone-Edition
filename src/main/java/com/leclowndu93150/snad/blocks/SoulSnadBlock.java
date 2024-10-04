@@ -38,25 +38,27 @@ public class SoulSnadBlock extends FallingBlock {
         return true;
     }
 
-
     @Override
     public void randomTick(@NotNull BlockState pState, @NotNull ServerLevel pLevel, @NotNull BlockPos pPos, @NotNull RandomSource pRandom) {
         this.tick(pState, pLevel, pPos, pRandom);
     }
 
     @Override
-    public void tick(@NotNull BlockState pState, ServerLevel pLevel, BlockPos pPos, @NotNull RandomSource pRandom) {
-        final Block blockAbove = pLevel.getBlockState(pPos.above()).getBlock();
-        if (blockAbove instanceof NetherWartBlock && pLevel.hasSignal(pPos,Direction.NORTH)) {
+    public void tick(@NotNull BlockState pState, @NotNull ServerLevel pLevel, @NotNull BlockPos pPos, @NotNull RandomSource pRandom) {
+        Block blockAbove = pLevel.getBlockState(pPos.above()).getBlock();
+
+        if (blockAbove instanceof NetherWartBlock && pLevel.hasNeighborSignal(pPos)) {
             boolean isSameBlockType = true;
             int height = 1;
+
             while (isSameBlockType) {
-                if (pPos.above(height).getY() < pLevel.getMaxBuildHeight()) {
-                    final Block nextBlock = pLevel.getBlockState(pPos.above(height)).getBlock();
+                BlockPos currentPos = pPos.above(height);
+                if (currentPos.getY() < pLevel.getMaxBuildHeight()) {
+                    Block nextBlock = pLevel.getBlockState(currentPos).getBlock();
 
                     if (nextBlock.getClass() == blockAbove.getClass()) {
                         for (int growthAttempts = 0; growthAttempts < 8; growthAttempts++) {
-                            pLevel.getBlockState(pPos.above(height)).randomTick(pLevel, pPos.above(height), pRandom);
+                            pLevel.getBlockState(currentPos).randomTick(pLevel, currentPos, pRandom);
                         }
                         height++;
                     } else {
@@ -65,9 +67,7 @@ public class SoulSnadBlock extends FallingBlock {
                 } else {
                     isSameBlockType = false;
                 }
-
             }
         }
     }
 }
-
