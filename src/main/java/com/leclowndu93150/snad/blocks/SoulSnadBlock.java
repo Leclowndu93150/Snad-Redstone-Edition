@@ -17,26 +17,18 @@ import org.jetbrains.annotations.Nullable;
 
 public class SoulSnadBlock extends FallingBlock {
 
-    public SoulSnadBlock(Properties pProperties) {
-        super(pProperties);
-    }
-
     public SoulSnadBlock() {
         super(Block.Properties.copy(Blocks.SOUL_SAND));
     }
 
-
     @Override
     public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable) {
-        if (plantable.getPlantType(world,pos) == PlantType.NETHER) {
-            return true;
-        }
-        return false;
+        return plantable.getPlantType(world, pos) == PlantType.NETHER;
     }
 
     @Override
     public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos, @Nullable Direction direction) {
-        return super.canConnectRedstone(state, level, pos, direction);
+        return true;
     }
 
     @Override
@@ -45,14 +37,17 @@ public class SoulSnadBlock extends FallingBlock {
     }
 
     @Override
-    public void tick(@NotNull BlockState pState, ServerLevel pLevel, BlockPos pPos, @NotNull RandomSource pRandom) {
+    public void tick(@NotNull BlockState pState, @NotNull ServerLevel pLevel, @NotNull BlockPos pPos, @NotNull RandomSource pRandom) {
         final Block blockAbove = pLevel.getBlockState(pPos.above()).getBlock();
-        for(Direction direction : Direction.values()) {
+
+        for (Direction direction : Direction.values()) {
             BlockPos offsetPos = pPos.relative(direction);
             BlockState blockState = pLevel.getBlockState(offsetPos);
-            if (blockAbove instanceof IPlantable && (blockState.hasProperty(BlockStateProperties.POWER)) && (blockState.getValue(BlockStateProperties.POWER) > 0)) {
+
+            if (blockAbove instanceof IPlantable && blockState.hasProperty(BlockStateProperties.POWER) && blockState.getValue(BlockStateProperties.POWER) > 0) {
                 boolean isSameBlockType = true;
                 int height = 1;
+
                 while (isSameBlockType) {
                     if (pPos.above(height).getY() < pLevel.getMaxBuildHeight()) {
                         final Block nextBlock = pLevel.getBlockState(pPos.above(height)).getBlock();
@@ -68,10 +63,8 @@ public class SoulSnadBlock extends FallingBlock {
                     } else {
                         isSameBlockType = false;
                     }
-
                 }
             }
         }
     }
 }
-

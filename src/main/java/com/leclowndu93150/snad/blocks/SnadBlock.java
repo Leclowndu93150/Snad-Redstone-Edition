@@ -5,12 +5,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.KelpBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.PlantType;
 import org.jetbrains.annotations.NotNull;
@@ -18,27 +20,37 @@ import org.jetbrains.annotations.Nullable;
 
 public class SnadBlock extends FallingBlock {
 
-    public SnadBlock(Properties pProperties) {
-        super(pProperties);
-    }
-
     public SnadBlock() {
         super(Block.Properties.copy(Blocks.SAND));
     }
 
+    @Override
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+        if (!level.isClientSide) {
+            level.scheduleTick(pos, this, this.getDelayAfterPlace());
+        }
+        super.onPlace(state, level, pos, oldState, isMoving);
+    }
+
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        if (isFree(level.getBlockState(pos.below()))) {
+            level.scheduleTick(pos, this, this.getDelayAfterPlace());
+        }
+    }
 
     @Override
     public boolean canSustainPlant(BlockState state, BlockGetter level, BlockPos pos, Direction facing, IPlantable plantable) {
         if (plantable.getPlantType(level, pos).equals(PlantType.DESERT)) {
             return true;
-        } else if (plantable.getPlantType(level, pos).equals(PlantType.BEACH)) {
+        }
+        else if (plantable.getPlantType(level, pos).equals(PlantType.BEACH)) {
             for (Direction direction : Direction.Plane.HORIZONTAL) {
                 boolean isWater = level.getFluidState(pos.relative(direction)).is(FluidTags.WATER);
                 boolean isFrostedIce = level.getBlockState(pos.relative(direction)).is(Blocks.FROSTED_ICE);
-                if (!isWater && !isFrostedIce) {
-                    continue;
+                if (isWater || isFrostedIce) {
+                    return true;
                 }
-                return true;
             }
         }
         return super.canSustainPlant(state, level, pos, facing, plantable);
@@ -46,7 +58,7 @@ public class SnadBlock extends FallingBlock {
 
     @Override
     public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos, @Nullable Direction direction) {
-        return super.canConnectRedstone(state, level, pos, direction);
+        return true;
     }
 
     @Override
@@ -55,35 +67,42 @@ public class SnadBlock extends FallingBlock {
     }
 
     @Override
-    public void tick(@NotNull BlockState pState, ServerLevel pLevel, BlockPos pPos, @NotNull RandomSource pRandom) {
-        final Block blockAbove = pLevel.getBlockState(pPos.above()).getBlock();
-        for(Direction direction : Direction.values()) {
-            BlockPos offsetPos = pPos.relative(direction);
-            BlockState blockState = pLevel.getBlockState(offsetPos);
-            if (blockAbove instanceof IPlantable && ((blockState.hasProperty(BlockStateProperties.POWER)) && (blockState.getValue(BlockStateProperties.POWER) != 0)) || pLevel.hasSignal(pPos,Direction.NORTH)) {
-                //System.out.println(blockState.getValue(BlockStateProperties.POWER));
-                boolean isSameBlockType = true;
-                int height = 1;
-                while (isSameBlockType) {
-                    if (pPos.above(height).getY() < pLevel.getMaxBuildHeight()) {
-                        final Block nextBlock = pLevel.getBlockState(pPos.above(height)).getBlock();
+    public void tick(@NotNull BlockState pState, @NotNull ServerLevel pLevel, @NotNull BlockPos pPos, @NotNull RandomSource pRandom) {
+        if (isFree(pLevel.getBlockState(pPos.below())) && pPos.getY() >= pLevel.getMinBuildHeight()) {
+            FallingBlockEntity fallingBlockEntity = FallingBlockEntity.fall(pLevel, pPos, pState);
+            this.falling(fallingBlockEntity);
+        }
+        else {
+            this.grow(pState, pLevel, pPos, pRandom);
+        }
+    }
 
-                        if (nextBlock.getClass() == blockAbove.getClass()) {
-                            for (int growthAttempts = 0; growthAttempts < 8; growthAttempts++) {
-                                nextBlock.randomTick(pLevel.getBlockState(pPos.above(height)), pLevel, pPos.above(height), pRandom);
-                            }
-                            height++;
-                        } else {
-                            isSameBlockType = false;
+    public void grow(@NotNull BlockState pState, ServerLevel pLevel, BlockPos pPos, @NotNull RandomSource pRandom) {
+        Block blockAbove = pLevel.getBlockState(pPos.above()).getBlock();
+
+        if (pLevel.hasNeighborSignal(pPos)) {
+            boolean isSameBlockType = true;
+            int height = 1;
+
+            while (isSameBlockType) {
+                BlockPos currentPos = pPos.above(height);
+                if (currentPos.getY() < pLevel.getMaxBuildHeight()) {
+                    Block nextBlock = pLevel.getBlockState(currentPos).getBlock();
+
+                    int growthAttemptsLimit = (nextBlock instanceof KelpBlock) ? 1 : 6;
+
+                    if (nextBlock.getClass() == blockAbove.getClass()) {
+                        for (int growthAttempts = 0; growthAttempts < growthAttemptsLimit; growthAttempts++) {
+                            pLevel.getBlockState(currentPos).randomTick(pLevel, currentPos, pRandom);
                         }
+                        height++;
                     } else {
                         isSameBlockType = false;
                     }
-
+                } else {
+                    isSameBlockType = false;
                 }
             }
-
         }
     }
 }
-
