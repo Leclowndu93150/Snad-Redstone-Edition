@@ -1,5 +1,6 @@
 package com.leclowndu93150.snad.blocks;
 
+import com.leclowndu93150.snad.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -8,10 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FallingBlock;
-import net.minecraft.world.level.block.KelpBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.PlantType;
@@ -89,7 +87,7 @@ public class SnadBlock extends FallingBlock {
                 if (currentPos.getY() < pLevel.getMaxBuildHeight()) {
                     Block nextBlock = pLevel.getBlockState(currentPos).getBlock();
 
-                    int growthAttemptsLimit = (nextBlock instanceof KelpBlock) ? 1 : 6;
+                    int growthAttemptsLimit = ((blockAbove instanceof BambooStalkBlock ) || (blockAbove instanceof BambooSaplingBlock) || (blockAbove instanceof  KelpPlantBlock)) ? Config.magicNumber2 :Config.magicNumber;
 
                     if (nextBlock.getClass() == blockAbove.getClass()) {
                         for (int growthAttempts = 0; growthAttempts < growthAttemptsLimit; growthAttempts++) {

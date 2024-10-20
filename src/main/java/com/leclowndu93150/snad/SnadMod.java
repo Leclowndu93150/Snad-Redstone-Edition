@@ -15,7 +15,9 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -55,15 +57,12 @@ public class SnadMod
                 output.accept(SOUL_SNAD_ITEM.get());
             }).build());
 
-    public SnadMod()
-    {
+    public SnadMod(){
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
-
-
-
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
 }
