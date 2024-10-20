@@ -1,5 +1,6 @@
 package com.leclowndu93150.snad.blocks;
 
+import com.leclowndu93150.snad.Config;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -90,7 +91,10 @@ public class SnadBlock extends FallingBlock {
                 if (currentPos.getY() < pLevel.getMaxBuildHeight()) {
                     Block nextBlock = pLevel.getBlockState(currentPos).getBlock();
 
-                    int growthAttemptsLimit = (nextBlock instanceof KelpBlock) ? 1 : 6;
+                    int growthAttemptsLimit = ((nextBlock instanceof BambooStalkBlock) ||
+                            (nextBlock instanceof BambooSaplingBlock) ||
+                            (nextBlock instanceof KelpPlantBlock)) ? Config.magicNumber2 : Config.magicNumber;
+
 
                     if (nextBlock.getClass() == blockAbove.getClass()) {
                         for (int growthAttempts = 0; growthAttempts < growthAttemptsLimit; growthAttempts++) {
