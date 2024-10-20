@@ -87,7 +87,7 @@ public class SnadBlock extends FallingBlock {
                 if (currentPos.getY() < pLevel.getMaxBuildHeight()) {
                     Block nextBlock = pLevel.getBlockState(currentPos).getBlock();
 
-                    int growthAttemptsLimit = ((blockAbove instanceof BambooStalkBlock ) || (blockAbove instanceof BambooSaplingBlock) || (blockAbove instanceof  KelpPlantBlock)) ? Config.magicNumber2 :Config.magicNumber;
+                    int growthAttemptsLimit = ((nextBlock instanceof BambooStalkBlock ) || (nextBlock instanceof BambooSaplingBlock) || (nextBlock instanceof  KelpPlantBlock)) ? Config.magicNumber2 :Config.magicNumber;
 
                     if (nextBlock.getClass() == blockAbove.getClass()) {
                         for (int growthAttempts = 0; growthAttempts < growthAttemptsLimit; growthAttempts++) {
